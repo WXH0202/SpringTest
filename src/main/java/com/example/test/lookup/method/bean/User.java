@@ -1,6 +1,6 @@
 package com.example.test.lookup.method.bean;
 
-public class User {
+public class User { 
     public void showMe(){
         System.out.println("i am user");
     }
