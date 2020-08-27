@@ -12,6 +12,7 @@ public class App {
         System.out.println("Hello World!");
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring-context.xml");
         AbstractGetBeanTest test = (AbstractGetBeanTest) applicationContext.getBean("abstractGetBeanTest");
+        System.out.println("test.user = " + test.user);
         test.showMe();
     }
 }
