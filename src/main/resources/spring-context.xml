@@ -12,4 +12,11 @@ default-lazy-init="true">
     </bean>
     
     <bean id="teacher" scope="singleton" class="com.example.test.lookup.method.bean.Teacher"/>
+    
+    <bean id="dog" class="com.example.test.scope.entity.Dog" scope="prototype"/>
+    
+    <bean id="chinese" class="com.example.test.scope.entity.Chinese">
+<!--        Spring 只要检测到 lookup-method 元素 , 会自动为该元素的 name 属性所指定的方法提供实现体 -->
+        <lookup-method name="getDog" bean="dog"/>
+    </bean>
 </beans>
