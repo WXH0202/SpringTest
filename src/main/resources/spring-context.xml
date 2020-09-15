@@ -1,22 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-default-lazy-init="true">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:utile="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd"
+       default-lazy-init="true">
     
-    <bean scope="prototype" id="abstractGetBeanTest" class="com.example.test.lookup.method.bean.AbstractGetBeanTest">
-        <lookup-method name="getBean" bean="teacher"/>
-        <constructor-arg ref="teacher"/>
-        <property name="userNo" value="teacher"/>
-        <constructor-arg value="10" type="int"/>
+<!--    <bean scope="prototype" id="abstractGetBeanTest" class="com.example.test.lookup.method.bean.AbstractGetBeanTest">-->
+<!--        <lookup-method name="getBean" bean="teacher"/>-->
+<!--        <constructor-arg ref="teacher"/>-->
+<!--        <property name="userNo" value="teacher"/>-->
+<!--        <constructor-arg value="10" type="int"/>-->
+<!--    </bean>-->
+<!--    -->
+<!--    <bean id="teacher" scope="singleton" class="com.example.test.lookup.method.bean.Teacher"/>-->
+<!--    -->
+<!--    <bean id="dog" class="com.example.test.scope.entity.Dog" scope="prototype"/>-->
+<!--    -->
+<!--    <bean id="chinese" class="com.example.test.scope.entity.Chinese">-->
+<!--&lt;!&ndash;        Spring 只要检测到 lookup-method 元素 , 会自动为该元素的 name 属性所指定的方法提供实现体 &ndash;&gt;-->
+<!--        <lookup-method name="getDog" bean="dog"/>-->
+<!--    </bean>-->
+    <bean id="person" class="com.example.test.propertyPathFactoryBean.entity.Son">
+        <property name="age" value="21"/>
+        <property name="toys">
+            <bean class="com.example.test.propertyPathFactoryBean.entity.Toys">
+                <property name="price" value="5.5"/>
+            </bean>
+        </property>
     </bean>
     
-    <bean id="teacher" scope="singleton" class="com.example.test.lookup.method.bean.Teacher"/>
+    <bean id="son.toys1" class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetBeanName" value="person"/>
+        <property name="propertyPath" value="toys"/>
+    </bean>
     
-    <bean id="dog" class="com.example.test.scope.entity.Dog" scope="prototype"/>
+    <bean id="son.toys.price" class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetBeanName" value="person"/>
+        <property name="propertyPath" value="toys.price"/>
+    </bean>
+
+    <bean id="son" class="com.example.test.propertyPathFactoryBean.entity.Son">
+        <property name="age">
+            <bean id="person.toys.price" class="org.springframework.beans.factory.config.PropertyPathFactoryBean"/>
+        </property>
+    </bean>
     
-    <bean id="chinese" class="com.example.test.scope.entity.Chinese">
-<!--        Spring 只要检测到 lookup-method 元素 , 会自动为该元素的 name 属性所指定的方法提供实现体 -->
-        <lookup-method name="getDog" bean="dog"/>
+    <bean id="age" class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetObject">
+            <bean class="com.example.test.propertyPathFactoryBean.entity.Persson">
+                <property name="age" value="21.5"/>
+            </bean>
+        </property>
+        <property name="propertyPath" value="age"/>
+    </bean>
+    
+    <util:property-path id="son.toys2" path="person.toys"/>
+
+    <bean id="son2" class="com.example.test.propertyPathFactoryBean.entity.Son">
+        <property name="age">
+            <util:property-path path="person.toys.price"/>            
+        </property>
+    </bean>
+    
+    <bean id="transactionSerializable" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="targetClass" value="java.sql.Connection"/>
+        <property name="targetField" value="TRANSACTION_SERIALIZABLE"/>
+    </bean>
+    
+<!--    <bean id="entity" class="com.example.test.fieldRetrievingFactoryBean.entity.FieldRetrievingFactoryBeanEntity">-->
+<!--        <property name="age">-->
+<!--            <bean class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">-->
+<!--                <property name="targetClass" value="java.sql.Connection"/>-->
+<!--                <property name="targetField" value="TRANSACTION_SERIALIZABLE"/>-->
+<!--            </bean>-->
+<!--        </property>-->
+<!--    </bean>-->
+<!--    <bean id="entity" class="com.example.test.fieldRetrievingFactoryBean.entity.FieldRetrievingFactoryBeanEntity">-->
+<!--        <property name="age">-->
+<!--            <bean id="java.sql.Connection.TRANSACTION_SERIALIZABLE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />-->
+<!--        </property>-->
+<!--    </bean>-->
+    <bean id="entity" class="com.example.test.fieldRetrievingFactoryBean.entity.FieldRetrievingFactoryBeanEntity">
+        <property name="age">
+            <util:constant static-field="java.sql.Connection.TRANSACTION_SERIALIZABLE"/>
+        </property>
     </bean>
 </beans>
